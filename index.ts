@@ -70,7 +70,7 @@ app.get('/quotes/:id', function (req, res) {
     const match = quotes.find(person => person.id === id)
     if (match) {
         res.send(match)
-    } else res.status(404).send({error: 'Person not found'})
+    } else res.status(404).send({error: 'Quote not found'})
 })
 
 
