@@ -74,9 +74,9 @@ app.get('/quotes/:id', function (req, res) {
 })
 
 
-app.use(cors({
-    origin: `http://localhost:3000`
-}));
+// app.use(cors({
+//     origin: `http://localhost:3000`
+// }));
 
 app.listen(PORT, () => {
     console.log(`Server runing on: http://localhost:${PORT}/`)
