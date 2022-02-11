@@ -57,11 +57,23 @@ const quotes: Quote[] = [
 
 
 app.get('/', function (req, res) {
-    res.send('Wellcome to Node')
+    res.send(`
+    <h1>Welcome to our quotes API!</h1>
+    <p>Here are some endpoints you can use:</p>
+    <ul>
+      <li><a href="/quotes">/quotes</a></li>
+      <li><a href="/randomQuote">/randomQuote</a></li>
+    </ul>
+   `)
 })
 
 app.get('/quotes', function (req, res) {
     res.send(quotes)
+})
+
+app.get('/randomQuote', function (req, res) {
+    const randomIndex = Math.floor(Math.random() * quotes.length)
+    res.send(quotes[randomIndex])
 })
 
 app.get('/quotes/:id', function (req, res) {
@@ -72,11 +84,6 @@ app.get('/quotes/:id', function (req, res) {
         res.send(match)
     } else res.status(404).send({error: 'Quote not found'})
 })
-
-
-// app.use(cors({
-//     origin: `http://localhost:3000`
-// }));
 
 app.listen(PORT, () => {
     console.log(`Server runing on: http://localhost:${PORT}/`)
