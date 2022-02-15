@@ -1,8 +1,9 @@
-import express from 'express'
+import express, { json } from 'express'
 import cors from 'cors'
 
 const app = express()
 app.use(cors())
+app.use(express.json())
 const PORT = 3001
 
 type Quote = {
@@ -107,10 +108,10 @@ app.get('/quotes', function (req, res) {
     const search = req.query.search
     let quotesToSend = quotes
 
-    if (typeof search === 'string' ) {
-        quotesToSend = quotesToSend.filter(quote => 
+    if (typeof search === 'string') {
+        quotesToSend = quotesToSend.filter(quote =>
             quote.content.toLowerCase().includes(search.toLowerCase())
-            )
+        )
     }
     res.send(quotesToSend)
 })
@@ -127,6 +128,54 @@ app.get('/quotes/:id', function (req, res) {
     if (match) {
         res.send(match)
     } else res.status(404).send({ error: 'Quote not found' })
+})
+
+app.post('/quotes', (req, res) => {
+    console.log(req.body)
+
+    const { firstName, lastName, content, image, age, dead } = req.body
+
+    const errors = []
+
+    if (typeof firstName !== 'string') {
+        errors.push(`First name missing or not a string`)
+    }
+
+    if (typeof lastName !== 'string') {
+        errors.push(`Last name missing or not a string`)
+    }
+
+    if (typeof content !== 'string') {
+        errors.push(`Content missing or not a string`)
+    }
+
+    if (typeof image !== 'string') {
+        errors.push(`Imagee missing or not a string`)
+    }
+
+    if (typeof age !== 'number') {
+        errors.push(`Age missing or not a number`)
+    }
+
+    if (typeof dead !== 'boolean') {
+        errors.push(`Dead missing or not a boolean`)
+    }
+
+    if (errors.length === 0) {
+        const newQuote: Quote = {
+            id: Math.random(),
+            firstName,
+            lastName,
+            content,
+            image,
+            age,
+            dead
+        }
+        quotes.push(newQuote)
+        res.status(201).send(newQuote)
+    } else {
+        res.status(400).send({ errors: errors })
+    }
 })
 
 app.listen(PORT, () => {
