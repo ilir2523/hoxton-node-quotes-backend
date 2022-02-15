@@ -1,4 +1,4 @@
-import express, { json } from 'express'
+import express from 'express'
 import cors from 'cors'
 
 const app = express()
@@ -8,6 +8,15 @@ const PORT = 3001
 
 type Quote = {
     id: number
+    content: string
+    firstName: string
+    lastName: string
+    age: number
+    image: string
+    dead: boolean
+}
+
+type NewQuote = {
     content: string
     firstName: string
     lastName: string
@@ -177,6 +186,41 @@ app.post('/quotes', (req, res) => {
         res.status(400).send({ errors: errors })
     }
 })
+
+app.patch('/quotes/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    const { firstName, lastName, content, image, age, dead }: NewQuote = req.body
+
+
+    const quoteToChange = quotes.find(quote => quote.id === id)
+
+    const errors = []
+
+    if (quoteToChange) {
+        if (typeof firstName === 'string') {
+            quoteToChange.firstName = firstName
+        } else errors.push(`First name not a string`)
+        if (typeof lastName === 'string') {
+            quoteToChange.lastName = lastName
+        } else errors.push(`Last name not a string`)
+        if (typeof content === 'string') {
+            quoteToChange.content = content
+        } else errors.push(`Content not a string`)
+        if (typeof image === 'string'){
+             quoteToChange.image = image
+            } else (`Imagee not a string`)
+        if (typeof age === 'number') {
+            quoteToChange.age = age
+        } else errors.push(`Age not a number`)
+        if (typeof dead === 'boolean') {
+            quoteToChange.dead = dead
+        } else errors.push(`Dead not a boolean`)
+        res.send({data: quoteToChange, errors: errors})
+    } else {
+        res.status(404).send({error: 'Quote not found.'})
+    }
+} )
 
 app.listen(PORT, () => {
     console.log(`Server runing on: http://localhost:${PORT}/`)
