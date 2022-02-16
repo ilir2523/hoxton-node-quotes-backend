@@ -85,8 +85,8 @@ let authors: Author[] = [
     },
     {
         'id': 8,
-        'firstName': 'Stephen King',
-        'lastName': 'Twain',
+        'firstName': 'Stephen',
+        'lastName': 'King',
         'age': 74,
         'image': "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFNn6FcqJgnTCBDjX9vK_qRnle-dHO1Jp7uEEqISfNOm8bbjoW",
         'dead': false
@@ -255,14 +255,32 @@ app.delete('/quotes/:id', (req, res) => {
 
     if (match) {
         quotes = quotes.filter(quote => quote.id !== id)
-        res.send({messsage: "Quote deleted sucessfully"})
+        res.send({ messsage: "Quote deleted sucessfully" })
     } else {
-        res.status(404).send({error: 'Qoute not found'})
+        res.status(404).send({ error: 'Qoute not found' })
     }
 })
 
 app.get('/authors', (req, res) => {
-    res.send(authors)
+    const search = req.query.search
+    let authorsToSend = authors
+
+    if (typeof search === 'string') {
+        authorsToSend = authorsToSend.filter(author =>
+            author.firstName.toLowerCase().includes(search.toLowerCase()) ||
+            author.lastName.toLowerCase().includes(search.toLowerCase())
+        )
+    }
+    res.send(authorsToSend)
+})
+
+app.get('/authors/:id', function (req, res) {
+    const id = Number(req.params.id)
+
+    const match = authors.find(person => person.id === id)
+    if (match) {
+        res.send(match)
+    } else res.status(404).send({ error: 'Author not found' })
 })
 
 app.post('/authors', (req, res) => {
@@ -309,6 +327,54 @@ app.post('/authors', (req, res) => {
         res.status(201).send(newAuthor)
     } else {
         res.status(400).send({ errors: errors })
+    }
+})
+
+app.patch('/authors/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    const { firstName,
+        lastName,
+        image,
+        age,
+        dead } = req.body
+
+    const authorToChange = authors.find(author => author.id === id)
+
+    const errors = []
+
+    if (authorToChange) {
+        if (typeof firstName === 'string') {
+            authorToChange.firstName = firstName
+        } else errors.push(`First name not a string`)
+        if (typeof lastName === 'string') {
+            authorToChange.lastName = lastName
+        } else errors.push(`Last name not a string`)
+        if (typeof image === 'string') {
+            authorToChange.image = image
+        } else (`Imagee not a string`)
+        if (typeof age === 'number') {
+            authorToChange.age = age
+        } else errors.push(`Age not a number`)
+        if (typeof dead === 'boolean') {
+            authorToChange.dead = dead
+        } else errors.push(`Dead not a boolean`)
+        res.send({ data: authorToChange, errors: errors })
+    } else {
+        res.status(404).send({ error: 'Author not found.' })
+    }
+})
+
+app.delete('/authors/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    const match = authors.find(author => author.id === id)
+
+    if (match) {
+        authors = authors.filter(author => author.id !== id)
+        res.send({ messsage: "Author deleted sucessfully" })
+    } else {
+        res.status(404).send({ error: 'Author not found' })
     }
 })
 
