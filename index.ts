@@ -25,7 +25,7 @@ type NewQuote = {
     dead: boolean
 }
 
-const quotes: Quote[] = [
+let quotes: Quote[] = [
     {
         'id': 1,
         'content': 'Make memes, not war!',
@@ -192,7 +192,6 @@ app.patch('/quotes/:id', (req, res) => {
 
     const { firstName, lastName, content, image, age, dead }: NewQuote = req.body
 
-
     const quoteToChange = quotes.find(quote => quote.id === id)
 
     const errors = []
@@ -207,20 +206,33 @@ app.patch('/quotes/:id', (req, res) => {
         if (typeof content === 'string') {
             quoteToChange.content = content
         } else errors.push(`Content not a string`)
-        if (typeof image === 'string'){
-             quoteToChange.image = image
-            } else (`Imagee not a string`)
+        if (typeof image === 'string') {
+            quoteToChange.image = image
+        } else (`Imagee not a string`)
         if (typeof age === 'number') {
             quoteToChange.age = age
         } else errors.push(`Age not a number`)
         if (typeof dead === 'boolean') {
             quoteToChange.dead = dead
         } else errors.push(`Dead not a boolean`)
-        res.send({data: quoteToChange, errors: errors})
+        res.send({ data: quoteToChange, errors: errors })
     } else {
-        res.status(404).send({error: 'Quote not found.'})
+        res.status(404).send({ error: 'Quote not found.' })
     }
-} )
+})
+
+app.delete('/quotes/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    const match = quotes.find(quote => quote.id === id)
+
+    if (match) {
+        quotes = quotes.filter(quote => quote.id !== id)
+        res.send({messsage: "Quote deleted sucessfully"})
+    } else {
+        res.status(404).send({error: 'Qoute not found'})
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Server runing on: http://localhost:${PORT}/`)
