@@ -132,8 +132,8 @@ deleteAuthors.run()
 const deleteQuotes = db.prepare(`DELETE FROM quotes;`)
 deleteQuotes.run()
 
-const createAuthor = db.prepare(`INSERT INTO authors (firstName, lastName, age, image, dead) VALUES (?,?,?,?,?);`)
-const createQuote = db.prepare(`INSERT INTO quotes (content, authorId) VALUES (?,?);`)
+export const createAuthor = db.prepare(`INSERT INTO authors (firstName, lastName, age, image, dead) VALUES (?,?,?,?,?);`)
+export const createQuote = db.prepare(`INSERT INTO quotes (content, authorId) VALUES (?,?);`)
 
 for (const author of authors) {
     const {firstName, lastName, age, image, dead} = author
